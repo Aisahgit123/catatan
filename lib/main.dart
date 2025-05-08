@@ -3,55 +3,131 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(const TodoListApp());
+  runApp(const MyApp());
 }
 
-class TodoListApp extends StatefulWidget {
-  const TodoListApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
   @override
-  State<TodoListApp> createState() => _TodoListAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
-class _TodoListAppState extends State<TodoListApp> {
+class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.light;
 
-  void _toggleTheme(bool isDark) {
+  void _toggleTheme() {
     setState(() {
-      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+      _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Todo List',
       debugShowCheckedModeBanner: false,
+      title: 'Catatan Harian',
       themeMode: _themeMode,
       theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.teal,
         fontFamily: 'Poppins',
+        brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white,
+        primarySwatch: Colors.pink,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.teal,
+          backgroundColor: Colors.pink,
           foregroundColor: Colors.white,
         ),
       ),
       darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.teal,
         fontFamily: 'Poppins',
+        brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF121212),
+        primarySwatch: Colors.pink,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.teal,
+          backgroundColor: Colors.pink,
           foregroundColor: Colors.white,
         ),
       ),
-      home: TodoHomePage(
-        isDarkMode: _themeMode == ThemeMode.dark,
+      home: HomePage(
+        themeMode: _themeMode,
         onThemeToggle: _toggleTheme,
       ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  final ThemeMode themeMode;
+  final VoidCallback onThemeToggle;
+
+  const HomePage({super.key, required this.themeMode, required this.onThemeToggle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Catatan Harian',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NotesPage(
+                      themeMode: themeMode,
+                      onThemeToggle: onThemeToggle,
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              ),
+              child: const Text(
+                'Lihat Semua Catatan',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NotesPage extends StatelessWidget {
+  final ThemeMode themeMode;
+  final VoidCallback onThemeToggle;
+
+  const NotesPage({
+    super.key,
+    required this.themeMode,
+    required this.onThemeToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TodoHomePage(
+      isDarkMode: themeMode == ThemeMode.dark,
+      onThemeToggle: onThemeToggle,
     );
   }
 }
@@ -75,7 +151,7 @@ class TodoItem {
 
 class TodoHomePage extends StatefulWidget {
   final bool isDarkMode;
-  final ValueChanged<bool> onThemeToggle;
+  final VoidCallback onThemeToggle;
 
   const TodoHomePage({
     super.key,
@@ -215,7 +291,7 @@ class _TodoHomePageState extends State<TodoHomePage> {
         actions: [
           Switch(
             value: isDark,
-            onChanged: widget.onThemeToggle,
+            onChanged: (_) => widget.onThemeToggle(),
             activeColor: Colors.white,
           ),
         ],
