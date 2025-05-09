@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Catatan Harian',
       themeMode: _themeMode,
       theme: ThemeData(
-        fontFamily: 'Poppins',
+        fontFamily: 'Amarante',
         brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white,
         primarySwatch: Colors.pink,
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       darkTheme: ThemeData(
-        fontFamily: 'Poppins',
+        fontFamily: 'Amarante',
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF121212),
         primarySwatch: Colors.pink,
